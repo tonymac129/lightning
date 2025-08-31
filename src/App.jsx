@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import Chat from "./components/Chat";
 import Time from "./components/Time";
 import Weather from "./components/Weather";
 import Tasks from "./components/Tasks";
+import Modal from "./components/Modal";
 
 function App() {
   const [command, setCommand] = useState("");
@@ -13,23 +14,45 @@ function App() {
   const [quotes, setQuotes] = useState("");
   const [quoteIndex, setQuoteIndex] = useState(0);
   const [name, setName] = useState(localStorage.getItem("lightning-name") ? localStorage.getItem("lightning-name") : "User");
+  //TODO: add name setting system
   const [tasks, setTasks] = useState(
     localStorage.getItem("lightning-tasks") ? JSON.parse(localStorage.getItem("lightning-tasks")) : []
   );
+  const [modal, setModal] = useState(false);
+  const [placeholder, setPlaceholder] = useState("Type /help for a list of commands!");
   const inputRef = useRef();
+
+  const commands = [
+    { a: "No command: search Google" },
+    { c: "c ", a: "send message to chatbot" },
+    { c: "yt", a: "search YouTube" },
+    { c: "gh", a: "search GitHub" },
+    { c: "i ", a: "search IMDb" },
+    { c: "g", a: "go to Gmail" },
+    { c: "d", a: "go to Google Drive" },
+    { c: "/t", a: "add task" },
+    { c: "/help", a: "view all commands" },
+  ];
+  const placeholders = ["Type /help for a list of commands!", "Type /t to add a new task!", "sdafsadfsdaf", "aerhergeag"];
 
   useEffect(() => {
     async function getQuote() {
       try {
-        const response = await fetch("https://zenquotes.io/api/quotes");
+        const response = await fetch("https://dummyjson.com/quotes");
         const data = await response.json();
-        console.log(data);
-        setQuotes(data);
+        setQuotes(data.quotes);
       } catch (error) {
         console.error("Error fetching quote:", error);
       }
     }
     getQuote();
+    let placeholderIndex = 0;
+    const refreshPlaceholder = setInterval(() => {
+      setPlaceholder(placeholders[placeholderIndex % placeholders.length]);
+      placeholderIndex++;
+    }, 5000);
+
+    return () => clearInterval(refreshPlaceholder);
   }, []);
 
   useEffect(() => inputRef.current.focus(), [inputRef]);
@@ -66,6 +89,8 @@ function App() {
       window.open(`https://drive.google.com`, "_self");
     } else if (shortHand === "/t") {
       handleNewTask(command.slice(2));
+    } else if (command.slice(0, 5) === "/help") {
+      setModal(true);
     } else {
       window.open(`https://www.google.com/search?q=${command}`, "_self");
     }
@@ -86,6 +111,16 @@ function App() {
 
   return (
     <motion.div initial={{ y: 100, opacity: 0.5 }} animate={{ y: 0, opacity: 1 }} className="wrap">
+      <AnimatePresence>
+        {modal && (
+          <Modal
+            title="Lightning Commands"
+            description="Always put the command in the front with the query behind it, separated by a space. Ex: yt cat videos"
+            content={commands}
+            setModal={setModal}
+          />
+        )}
+      </AnimatePresence>
       <div className="info">
         <Time />
         <div className="hero">
@@ -93,7 +128,7 @@ function App() {
           <p className="hero-quote" onClick={() => setQuoteIndex((quoteIndex + 1) % quotes.length)}>
             {quotes.length > 0 ? (
               <>
-                "{quotes[quoteIndex]?.q}" - {quotes[quoteIndex]?.a}
+                "{quotes[quoteIndex]?.quote}" - {quotes[quoteIndex]?.author}
               </>
             ) : (
               "Fetching quote..."
@@ -113,7 +148,7 @@ function App() {
           type="text"
           value={command}
           onInput={(e) => setCommand(e.target.value)}
-          placeholder="Visit anywhere on the internet"
+          placeholder={placeholder}
           ref={inputRef}
           className="command-input"
         />
