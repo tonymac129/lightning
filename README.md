@@ -1,1 +1,1 @@
-A personal browser new tab dashboard where users can customize it however they want with powerful commands and functional widgets for them to use the internet more easily than ever before.
+Lightning is a customizable personal browser new tab dashboard with powerful commands and functional widgets to help make your browsing experience lightning fast.
