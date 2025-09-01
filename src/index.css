@@ -19,6 +19,7 @@
 
 body {
   background-color: var(--primary-bg);
+  overflow-y: hidden;
 }
 
 .wrap {
@@ -162,6 +163,10 @@ body {
   position: relative;
 }
 
+.note-widget {
+  padding: 15px 5px;
+}
+
 .chat-prompt,
 .chat-response {
   color: var(--secondary-text);
@@ -191,7 +196,8 @@ body {
   overflow-x: hidden;
 }
 
-.task-items::-webkit-scrollbar-thumb {
+.task-items::-webkit-scrollbar-thumb,
+.note::-webkit-scrollbar-thumb {
   border-color: var(--secondary-bg);
 }
 
@@ -231,6 +237,17 @@ body {
 .task-input::placeholder {
   font-size: 15px;
   font-style: italic;
+}
+
+.note {
+  resize: none;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  color: var(--secondary-text);
+  font-size: 18px;
+  height: 100%;
+  padding: 0px 20px;
 }
 
 .message {
@@ -350,6 +367,50 @@ body {
 
 .modal-close:hover {
   transform: scale(1.4) rotate(10deg);
+}
+
+.welcome {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.welcome-input {
+  background-color: var(--secondary-bg);
+  border: none;
+  width: 100%;
+  border-radius: 5px;
+  outline: none;
+  font-size: 20px;
+  color: var(--secondary-text);
+  padding: 10px 15px;
+  margin-block: 15px;
+}
+
+.welcome-warning {
+  position: absolute;
+  top: 50px;
+  font-size: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--primary-text);
+}
+
+.welcome-btn {
+  background-color: var(--primary-color);
+  color: var(--primary-text);
+  font-size: 18px;
+  border: none;
+  outline: none;
+  border-radius: 5px;
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: box-shadow 0.3s ease;
+  margin-top: 15px;
+}
+
+.welcome-btn:hover {
+  box-shadow: 0px 0px 10px var(--primary-shadow);
 }
 
 @keyframes breathe {

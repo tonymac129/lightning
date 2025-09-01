@@ -4,6 +4,7 @@ import Chat from "./components/Chat";
 import Time from "./components/Time";
 import Weather from "./components/Weather";
 import Tasks from "./components/Tasks";
+import Note from "./components/Note";
 import Modal from "./components/Modal";
 
 function App() {
@@ -12,18 +13,22 @@ function App() {
   const [mode, setMode] = useState("search");
   const [pressed, setPressed] = useState(false);
   const [quotes, setQuotes] = useState("");
-  const [quoteIndex, setQuoteIndex] = useState(0);
-  const [name, setName] = useState(localStorage.getItem("lightning-name") ? localStorage.getItem("lightning-name") : "User");
-  //TODO: add name setting system
+  const [quoteIndex, setQuoteIndex] = useState(Math.round(Math.random() * 30));
+  const [newUser, setNewUser] = useState(false);
+  const [name, setName] = useState(localStorage.getItem("lightning-name") ? localStorage.getItem("lightning-name") : "");
   const [tasks, setTasks] = useState(
     localStorage.getItem("lightning-tasks") ? JSON.parse(localStorage.getItem("lightning-tasks")) : []
   );
   const [modal, setModal] = useState(false);
-  const [placeholder, setPlaceholder] = useState("Type /help for a list of commands!");
+  const [placeholder, setPlaceholder] = useState("Type /h for a list of commands!");
+  const [newNote, setNewNote] = useState(
+    localStorage.getItem("lightning-note") ? JSON.parse(localStorage.getItem("lightning-note")) : ""
+  );
   const inputRef = useRef();
 
   const commands = [
     { a: "No command: search Google" },
+    { a: "URL: open website" },
     { c: "c ", a: "send message to chatbot" },
     { c: "yt", a: "search YouTube" },
     { c: "gh", a: "search GitHub" },
@@ -31,9 +36,10 @@ function App() {
     { c: "g", a: "go to Gmail" },
     { c: "d", a: "go to Google Drive" },
     { c: "/t", a: "add task" },
-    { c: "/help", a: "view all commands" },
+    { c: "/n", a: "add note" },
+    { c: "/h", a: "view all commands" },
   ];
-  const placeholders = ["Type /help for a list of commands!", "Type /t to add a new task!", "sdafsadfsdaf", "aerhergeag"];
+  const placeholders = ["Type /h for a list of commands!", "Type /t to add a new task!", "More commands coming soon!"];
 
   useEffect(() => {
     async function getQuote() {
@@ -51,13 +57,22 @@ function App() {
       setPlaceholder(placeholders[placeholderIndex % placeholders.length]);
       placeholderIndex++;
     }, 5000);
+    if (!localStorage.getItem("lightning-name")) {
+      setNewUser(true);
+    } else {
+      setNewUser(false);
+    }
 
     return () => clearInterval(refreshPlaceholder);
   }, []);
 
   useEffect(() => inputRef.current.focus(), [inputRef]);
 
+  useEffect(() => localStorage.setItem("lightning-name", name), [name]);
+
   useEffect(() => localStorage.setItem("lightning-tasks", JSON.stringify(tasks)), [tasks]);
+
+  useEffect(() => localStorage.setItem("lightning-note", JSON.stringify(newNote)), [newNote]);
 
   useEffect(() => {
     if (command.length > 0) {
@@ -89,8 +104,22 @@ function App() {
       window.open(`https://drive.google.com`, "_self");
     } else if (shortHand === "/t") {
       handleNewTask(command.slice(2));
-    } else if (command.slice(0, 5) === "/help") {
+    } else if (shortHand === "/n") {
+      setNewNote(command.slice(2));
+    } else if (shortHand === "/h") {
       setModal(true);
+    } else if (
+      command.includes("http") ||
+      command.includes("www.") ||
+      command.includes(".co") ||
+      command.includes(".org") ||
+      command.includes(".net") ||
+      command.includes("edu") ||
+      command.includes(".gov")
+    ) {
+      if (command.includes("https://") || command.includes("http://")) {
+        window.open(command, "_self");
+      } else window.open("https://" + command, "_self");
     } else {
       window.open(`https://www.google.com/search?q=${command}`, "_self");
     }
@@ -118,6 +147,15 @@ function App() {
             description="Always put the command in the front with the query behind it, separated by a space. Ex: yt cat videos"
             content={commands}
             setModal={setModal}
+          />
+        )}
+        {newUser && (
+          <Modal
+            title="Welcome to Lightning!"
+            description="Get to where you want, lightning fast. Lightning is a highly customizable browser new tab dashboard with powerful commands and functional widgets!"
+            welcome={true}
+            setName={setName}
+            setNewUser={setNewUser}
           />
         )}
       </AnimatePresence>
@@ -159,6 +197,7 @@ function App() {
       <div className="widgets">
         <Chat prompt={prompt} mode={mode} />
         <Tasks tasks={tasks} setTasks={setTasks} addTask={handleNewTask} deleteTask={handleDeleteTask} />
+        <Note newNote={newNote} setNewNote={setNewNote} />
       </div>
     </motion.div>
   );
