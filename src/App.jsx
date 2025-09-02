@@ -5,6 +5,7 @@ import Time from "./components/Time";
 import Weather from "./components/Weather";
 import Tasks from "./components/Tasks";
 import Note from "./components/Note";
+import Timer from "./components/Timer";
 import Modal from "./components/Modal";
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
   const [newNote, setNewNote] = useState(
     localStorage.getItem("lightning-note") ? JSON.parse(localStorage.getItem("lightning-note")) : ""
   );
+  const [timer, setTimer] = useState("Start");
   const inputRef = useRef();
 
   const commands = [
@@ -36,6 +38,7 @@ function App() {
     { c: "g", a: "go to Gmail" },
     { c: "d", a: "go to Google Drive" },
     { c: "/t", a: "add task" },
+    { c: "/tm", a: "start 5 minute timer" },
     { c: "/n", a: "add note" },
     { c: "/h", a: "view all commands" },
   ];
@@ -102,6 +105,8 @@ function App() {
       window.open(`https://gmail.com`, "_self");
     } else if (shortHand === "d ") {
       window.open(`https://drive.google.com`, "_self");
+    } else if (command.slice(0, 3) === "/tm") {
+      setTimer("Pause");
     } else if (shortHand === "/t") {
       handleNewTask(command.slice(2));
     } else if (shortHand === "/n") {
@@ -198,6 +203,7 @@ function App() {
         <Chat prompt={prompt} mode={mode} />
         <Tasks tasks={tasks} setTasks={setTasks} addTask={handleNewTask} deleteTask={handleDeleteTask} />
         <Note newNote={newNote} setNewNote={setNewNote} />
+        <Timer timer={timer} setTimer={setTimer} />
       </div>
     </motion.div>
   );
