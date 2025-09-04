@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import Chat from "./components/Chat";
 import Time from "./components/Time";
 import Weather from "./components/Weather";
+import Shortcuts from "./components/Shortcuts";
 import Tasks from "./components/Tasks";
 import Note from "./components/Note";
 import Timer from "./components/Timer";
@@ -26,6 +27,12 @@ function App() {
     localStorage.getItem("lightning-note") ? JSON.parse(localStorage.getItem("lightning-note")) : ""
   );
   const [timer, setTimer] = useState("Start");
+  const [shortcuts, setShortcuts] = useState(
+    localStorage.getItem("lightning-shortcuts") ? JSON.parse(localStorage.getItem("lightning-shortcuts")) : []
+  );
+  const [shortModal, setShortModal] = useState(false);
+  const [editModal, setEditModal] = useState(false);
+  const [editInfo, setEditInfo] = useState();
   const inputRef = useRef();
 
   const commands = [
@@ -40,6 +47,8 @@ function App() {
     { c: "/t", a: "add task" },
     { c: "/tm", a: "start 5 minute timer" },
     { c: "/n", a: "add note" },
+    { c: "/s1", a: "go to shortcut 1" },
+    { c: "/s2", a: "go to shortcut 2 etc." },
     { c: "/h", a: "view all commands" },
   ];
   const placeholders = ["Type /h for a list of commands!", "Type /t to add a new task!", "More commands coming soon!"];
@@ -77,6 +86,8 @@ function App() {
 
   useEffect(() => localStorage.setItem("lightning-note", JSON.stringify(newNote)), [newNote]);
 
+  useEffect(() => localStorage.setItem("lightning-shortcuts", JSON.stringify(shortcuts)), [shortcuts]);
+
   useEffect(() => {
     if (command.length > 0) {
       setPressed(true);
@@ -113,6 +124,8 @@ function App() {
       setNewNote(command.slice(2));
     } else if (shortHand === "/h") {
       setModal(true);
+    } else if (shortHand === "/s") {
+      window.open(shortcuts[command.slice(2, 3) - 1].url, "_self");
     } else if (
       command.includes("http") ||
       command.includes("www.") ||
@@ -163,6 +176,16 @@ function App() {
             setNewUser={setNewUser}
           />
         )}
+        {shortModal && <Modal title="Add Shortcut" setModal={setShortModal} shortcuts={shortcuts} setShortcuts={setShortcuts} />}
+        {editModal && (
+          <Modal
+            title="Edit Shortcut"
+            setModal={setEditModal}
+            shortcuts={shortcuts}
+            setShortcuts={setShortcuts}
+            editInfo={editInfo}
+          />
+        )}
       </AnimatePresence>
       <div className="info">
         <Time />
@@ -199,6 +222,13 @@ function App() {
           <img src="/lightning/icons/return.svg" />
         </motion.button>
       </form>
+      <Shortcuts
+        shortcuts={shortcuts}
+        setShortcuts={setShortcuts}
+        setShortModal={setShortModal}
+        setEditInfo={setEditInfo}
+        setEditModal={setEditModal}
+      />
       <div className="widgets">
         <Chat prompt={prompt} mode={mode} />
         <Tasks tasks={tasks} setTasks={setTasks} addTask={handleNewTask} deleteTask={handleDeleteTask} />
