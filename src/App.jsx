@@ -33,6 +33,9 @@ function App() {
   const [shortModal, setShortModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
   const [editInfo, setEditInfo] = useState();
+  const [settingModal, setSettingModal] = useState(false);
+  const [theme, setTheme] = useState(localStorage.getItem("lightning-theme") ? localStorage.getItem("lightning-theme") : "");
+  const [bg, setBg] = useState(localStorage.getItem("lightning-bg") ? localStorage.getItem("lightning-bg") : "");
   const inputRef = useRef();
 
   const commands = [
@@ -49,6 +52,7 @@ function App() {
     { c: "/n", a: "add note" },
     { c: "/s1", a: "go to shortcut 1" },
     { c: "/s2", a: "go to shortcut 2 etc." },
+    { c: "/s", a: "open Settings" },
     { c: "/h", a: "view all commands" },
   ];
   const placeholders = [
@@ -94,6 +98,23 @@ function App() {
   useEffect(() => localStorage.setItem("lightning-shortcuts", JSON.stringify(shortcuts)), [shortcuts]);
 
   useEffect(() => {
+    if (theme) {
+      document.body.className = "";
+      document.body.classList.add(theme);
+      localStorage.setItem("lightning-theme", theme);
+    }
+  }, [theme]);
+
+  useEffect(() => {
+    if (bg) {
+      document.body.style.backgroundImage = `linear-gradient(var(--modal-bg),var(--modal-bg)), url(${bg})`;
+      localStorage.setItem("lightning-bg", bg);
+    } else {
+      document.body.style.background = "var(--body-bg)";
+    }
+  }, [bg]);
+
+  useEffect(() => {
     if (command.length > 0) {
       setPressed(true);
     }
@@ -129,7 +150,9 @@ function App() {
       setNewNote(command.slice(2));
     } else if (shortHand === "/h") {
       setModal(true);
-    } else if (shortHand === "/s") {
+    } else if (shortHand === "/s" && command.length == 2) {
+      setSettingModal(true);
+    } else if (shortHand === "/s" && command.length > 2) {
       window.open(shortcuts[command.slice(2, 3) - 1].url, "_self");
     } else if (
       command.includes("http") ||
@@ -189,6 +212,18 @@ function App() {
             shortcuts={shortcuts}
             setShortcuts={setShortcuts}
             editInfo={editInfo}
+          />
+        )}
+        {settingModal && (
+          <Modal
+            title="Settings"
+            setModal={setSettingModal}
+            name={name}
+            setName={setName}
+            theme={theme}
+            setTheme={setTheme}
+            bg={bg}
+            setBg={setBg}
           />
         )}
       </AnimatePresence>
