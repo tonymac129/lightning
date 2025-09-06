@@ -20,21 +20,37 @@
 body {
   background-color: var(--primary-bg);
   overflow-y: hidden;
+  display: flex;
+  justify-content: center;
+  height: 100vh;
+  align-items: center;
 }
 
 .wrap {
-  padding: 30px 100px;
+  padding-inline: 100px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 0.5fr 1fr 1fr;
+  width: 100vw;
+  height: calc(100vh - 100px);
+  max-width: 3000px;
+  max-height: 800px;
+  row-gap: 30px;
 }
 
 .info {
   display: flex;
   justify-content: space-between;
+  grid-column: 1 / -1;
+  gap: 30px;
 }
 
 .panel {
   background-color: var(--secondary-bg);
   border-radius: 15px;
-  width: 300px;
+  flex: 1;
+  /* width: 50%; */
+  /* max-width: 300px; */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -120,7 +136,8 @@ body {
   flex-direction: column;
   gap: 30px;
   align-items: center;
-  width: calc(100% - 700px);
+  /* width: calc(100% - 700px); */
+  flex: 1.5;
 }
 
 .hero-title {
@@ -143,8 +160,13 @@ body {
   height: 120px;
   display: flex;
   justify-content: space-between;
-  margin-block: 20px;
   gap: 50px;
+  grid-row: 3;
+  grid-column: 1 /-1;
+}
+
+.shortcuts:has(> :only-child) {
+  justify-content: center;
 }
 
 .shortcut {
@@ -226,8 +248,12 @@ body {
 
 .widgets {
   display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  grid-column: 1 / -1;
   flex-wrap: wrap;
   gap: 30px 15px;
+  grid-row: 4;
 }
 
 .widget {
@@ -237,7 +263,8 @@ body {
   flex-direction: column;
   padding: 15px;
   gap: 15px;
-  width: 300px;
+  width: 23%;
+  /* max-width: 300px; */
   height: 200px;
   overflow: auto;
 }
@@ -274,7 +301,7 @@ body {
   gap: 5px;
   position: absolute;
   left: 5px;
-  width: 295px;
+  width: calc(100% - 10px);
   padding-inline: 10px 5px;
   overflow-x: hidden;
 }
@@ -314,7 +341,7 @@ body {
   color: var(--primary-text);
   position: absolute;
   bottom: 10px;
-  width: 270px;
+  width: calc(100% - 30px);
 }
 
 .task-input::placeholder {
@@ -349,7 +376,7 @@ body {
 .indicator-wrap {
   position: absolute;
   bottom: 80px;
-  width: 200px;
+  width: calc(100% - 100px);
   margin-inline: 35px;
   background-color: var(--primary-border);
   border-radius: 10px;
@@ -373,7 +400,7 @@ body {
   font-size: 18px;
   position: absolute;
   bottom: 10px;
-  width: 270px;
+  width: calc(100% - 30px);
 }
 
 .message {
@@ -393,8 +420,10 @@ body {
   position: relative;
   display: flex;
   align-items: center;
+  height: 60px;
   transition: box-shadow 0.3s ease;
-  margin-block: 30px;
+  grid-row: 2;
+  grid-column: 1/ -1;
 }
 
 .command-bar:has(.command-input:focus) {
@@ -453,6 +482,9 @@ body {
   padding: 30px 50px;
   position: relative;
   width: 500px;
+  max-width: calc(100vw - 100px);
+  max-height: calc(100vh - 50px);
+  overflow: auto;
 }
 
 .modal-title {
@@ -537,6 +569,39 @@ body {
 
 .welcome-btn:hover {
   box-shadow: 0px 0px 10px var(--primary-shadow);
+}
+
+@media (max-width:1200px) {
+  .wrap {
+    row-gap: 10px;
+    padding-inline: 50px;
+    height: calc(100vh - 30px);
+  }
+
+  .widget {
+    max-height: 150px !important;
+  }
+
+  .hero {
+    gap: 10px;
+  }
+
+  .hero-title {
+    font-size: 25px;
+  }
+
+  .shortcuts {
+    height: 80px;
+  }
+
+  .shortcut img {
+    height: 40px;
+    width: 40px;
+  }
+
+  .panel {
+    height: 100px;
+  }
 }
 
 @keyframes breathe {

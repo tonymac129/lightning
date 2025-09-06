@@ -51,7 +51,12 @@ function App() {
     { c: "/s2", a: "go to shortcut 2 etc." },
     { c: "/h", a: "view all commands" },
   ];
-  const placeholders = ["Type /h for a list of commands!", "Type /t to add a new task!", "More commands coming soon!"];
+  const placeholders = [
+    "Type /h for a list of commands!",
+    "Type /t to add a new task!",
+    "Type /n to add a note!",
+    "Type /s to change the settings!",
+  ];
 
   useEffect(() => {
     async function getQuote() {
@@ -188,8 +193,8 @@ function App() {
         )}
       </AnimatePresence>
       <div className="info">
-        <Time />
-        <div className="hero">
+        <Time className="info-widget" />
+        <div className="hero info-widget">
           <h1 className="hero-title">Welcome back, {name}!</h1>
           <p className="hero-quote" onClick={() => setQuoteIndex((quoteIndex + 1) % quotes.length)}>
             {quotes.length > 0 ? (
@@ -201,12 +206,16 @@ function App() {
             )}
           </p>
         </div>
-        <Weather />
+        <Weather className="info-widget" />
       </div>
       <form
         onSubmit={(e) => {
           e.preventDefault();
           handleCommand();
+        }}
+        onClick={() => {
+          let index = (placeholders.indexOf(placeholder) + 1) % placeholders.length;
+          setPlaceholder(placeholders[index]);
         }}
         className={`command-bar  ${pressed ? "typing" : ""}`}
       >
