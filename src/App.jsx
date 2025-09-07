@@ -36,6 +36,7 @@ function App() {
   const [settingModal, setSettingModal] = useState(false);
   const [theme, setTheme] = useState(localStorage.getItem("lightning-theme") ? localStorage.getItem("lightning-theme") : "");
   const [bg, setBg] = useState(localStorage.getItem("lightning-bg") ? localStorage.getItem("lightning-bg") : "");
+  const [custom, setCustom] = useState(JSON.parse(localStorage.getItem("lightning-custom")) || []);
   const inputRef = useRef();
 
   const commands = [
@@ -57,9 +58,13 @@ function App() {
   ];
   const placeholders = [
     "Type /h for a list of commands!",
+    "Type /s to change the settings!",
     "Type /t to add a new task!",
     "Type /n to add a note!",
-    "Type /s to change the settings!",
+    "Type /tm to start a 5 minute timer!",
+    "Click to see more hints!",
+    "Click on the quote to refresh it!",
+    "Click on the temperature to switch units!"
   ];
 
   useEffect(() => {
@@ -96,6 +101,8 @@ function App() {
   useEffect(() => localStorage.setItem("lightning-note", JSON.stringify(newNote)), [newNote]);
 
   useEffect(() => localStorage.setItem("lightning-shortcuts", JSON.stringify(shortcuts)), [shortcuts]);
+
+  useEffect(() => localStorage.setItem("lightning-custom", JSON.stringify(custom)), [custom]);
 
   useEffect(() => {
     if (theme) {
@@ -222,8 +229,9 @@ function App() {
             setName={setName}
             theme={theme}
             setTheme={setTheme}
-            bg={bg}
             setBg={setBg}
+            custom={custom}
+            setCustom={setCustom}
           />
         )}
       </AnimatePresence>
@@ -266,18 +274,20 @@ function App() {
           <img src="/lightning/icons/return.svg" />
         </motion.button>
       </form>
-      <Shortcuts
-        shortcuts={shortcuts}
-        setShortcuts={setShortcuts}
-        setShortModal={setShortModal}
-        setEditInfo={setEditInfo}
-        setEditModal={setEditModal}
-      />
+      {!custom.includes(0) && (
+        <Shortcuts
+          shortcuts={shortcuts}
+          setShortcuts={setShortcuts}
+          setShortModal={setShortModal}
+          setEditInfo={setEditInfo}
+          setEditModal={setEditModal}
+        />
+      )}
       <div className="widgets">
-        <Chat prompt={prompt} mode={mode} />
-        <Tasks tasks={tasks} setTasks={setTasks} addTask={handleNewTask} deleteTask={handleDeleteTask} />
-        <Note newNote={newNote} setNewNote={setNewNote} />
-        <Timer timer={timer} setTimer={setTimer} />
+        {!custom.includes(1) && <Chat prompt={prompt} mode={mode} />}
+        {!custom.includes(2) && <Tasks tasks={tasks} setTasks={setTasks} addTask={handleNewTask} deleteTask={handleDeleteTask} />}
+        {!custom.includes(3) && <Note newNote={newNote} setNewNote={setNewNote} />}
+        {!custom.includes(4) && <Timer timer={timer} setTimer={setTimer} />}
       </div>
     </motion.div>
   );

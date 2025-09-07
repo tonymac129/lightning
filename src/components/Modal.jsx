@@ -15,8 +15,9 @@ function Modal({
   name = null,
   theme = null,
   setTheme = null,
-  bg = null,
   setBg = null,
+  custom = null,
+  setCustom = null,
 }) {
   const [editName, setEditName] = useState(editInfo !== null ? shortcuts[editInfo].name : "");
   const [editUrl, setEditUrl] = useState(editInfo !== null ? shortcuts[editInfo].url : "");
@@ -28,6 +29,7 @@ function Modal({
   const shortcutURLRef = useRef();
   const themeRef = useRef();
   const bgRef = useRef();
+  const customize = ["Shortcuts", "Chat", "Tasks", "Note", "Timer"];
 
   function handleSetup() {
     if (nameRef.current.value.trim().length > 0) {
@@ -79,6 +81,22 @@ function Modal({
           window.location.reload();
         }
       });
+    }
+  }
+
+  function handleRemove() {
+    if (confirm("Are you sure you want to remove your current background image?")) {
+      localStorage.setItem("lightning-bg", "");
+      localStorage.setItem("lightning-bgname", "");
+      window.location.reload();
+    }
+  }
+
+  function handleCheck(e, i) {
+    if (e.target.checked) {
+      setCustom(custom.filter((option) => option !== i));
+    } else {
+      setCustom([...custom, i]);
     }
   }
 
@@ -174,9 +192,29 @@ function Modal({
               <label className="setting-label">Background</label>
               <input id="bg-input" type="file" ref={bgRef} className="setting-file" />
               {loading && <div className="message">Please wait about 5 seconds for the file to upload!</div>}
-              <label htmlFor="bg-input" className="file-btn" onClick={()=>setLoading(true)}>
+              <label htmlFor="bg-input" className="file-btn" onClick={() => setLoading(true)}>
                 {bgRef.current?.files[0] ? bgRef.current.files[0].name.slice(0, 30) : bgName ? bgName : "Choose File"}
               </label>
+              {bgName && (
+                <div className="message message-link" onClick={handleRemove}>
+                  Remove Background
+                </div>
+              )}
+            </div>
+            <div className="setting-item">
+              <label className="setting-label">Customize</label>
+              <div className="setting-boxes">
+                {customize.map((option, i) => {
+                  return (
+                    <div className="setting-box">
+                      <label className="setting-check">
+                        <input checked={!custom?.includes(i)} onChange={(e) => handleCheck(e, i)} type="checkbox" />
+                      </label>
+                      {option}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
             <div className="setting-item warning" onClick={handleClear}>
               Clear data
@@ -184,6 +222,29 @@ function Modal({
             <button className="welcome-btn" onClick={handleSave}>
               Save
             </button>
+            <div className="credits">
+              <div className="copy">
+                Made with ❤️ and{" "}
+                <a href="https://react.dev" target="_blank">
+                  React
+                </a>{" "}
+                for{" "}
+                <a href="https://summer.hackclub.com" target="_blank">
+                  Summer of Making
+                </a>
+              </div>
+              <div className="copy">
+                &copy; {new Date().getFullYear()}{" "}
+                <a href="https://github.com/tonymac129" target="_blank">
+                  TonyMac129
+                </a>
+              </div>
+              <div className="copy">
+                <a href="https://github.com/tonymac129/lightning" target="_blank">
+                  View source
+                </a>
+              </div>
+            </div>
           </div>
         )}
       </motion.div>

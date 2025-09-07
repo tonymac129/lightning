@@ -308,7 +308,7 @@ body {
   flex-direction: column;
   padding: 15px;
   gap: 15px;
-  width: 23%;
+  flex: 1;
   height: 250px;
   overflow: auto;
 }
@@ -455,8 +455,46 @@ body {
   margin-inline: auto;
 }
 
+.message-link {
+  cursor: pointer;
+}
+
+.message-link:hover {
+  text-decoration: underline;
+}
+
 .setting-item .message {
   width: 100%;
+}
+
+.setting-boxes {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.setting-box {
+  color: var(--secondary-text);
+  font-size: 18px;
+  display: flex;
+  gap: 15px;
+}
+
+.setting-check {
+  width: 20px;
+  height: 20px;
+  background-color: transparent;
+  border-radius: 5px;
+  cursor: pointer;
+  border: 2px solid var(--primary-color);
+}
+
+.setting-check:has(input:checked) {
+  background-color: var(--primary-color);
+}
+
+.setting-check input {
+  display: none;
 }
 
 .command-bar {
@@ -675,6 +713,20 @@ body {
 
 .warning:hover {
   text-decoration: underline;
+}
+
+.credits {
+  color: var(--secondary-text);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  font-size: 14px;
+  padding-top: 30px;
+}
+
+.copy a {
+  color: var(--secondary-text);
 }
 
 @media (max-width: 1200px) {
