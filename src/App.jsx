@@ -145,9 +145,9 @@ function App() {
       window.open(`https://github.com/search?s=stars&q=${command.slice(3)}`, "_self");
     } else if (shortHand === "i ") {
       window.open(`https://www.imdb.com/find/?q=${command.slice(2)}`, "_self");
-    } else if (shortHand === "g ") {
+    } else if (command === "g") {
       window.open(`https://gmail.com`, "_self");
-    } else if (shortHand === "d ") {
+    } else if (command === "d") {
       window.open(`https://drive.google.com`, "_self");
     } else if (command.slice(0, 3) === "/tm") {
       setTimer("Pause");
@@ -193,6 +193,7 @@ function App() {
 
   return (
     <motion.div initial={{ y: 100, opacity: 0.5 }} animate={{ y: 0, opacity: 1 }} className="wrap">
+      <title>{`${name.length>0?name+"'s":""} Lightning`}</title>
       <AnimatePresence>
         {modal && (
           <Modal

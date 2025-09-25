@@ -24,6 +24,9 @@ function Modal({
   const [editUser, setEditUser] = useState(name ? name : "");
   const [bgName, setBgName] = useState(localStorage.getItem("lightning-bgname") ? localStorage.getItem("lightning-bgname") : "");
   const [loading, setLoading] = useState(false);
+  const editNameRef = useRef(editName);
+  const editURLRef = useRef(editUrl);
+  const settingNameRef = useRef(name);
   const nameRef = useRef();
   const shortcutNameRef = useRef();
   const shortcutURLRef = useRef();
@@ -49,8 +52,9 @@ function Modal({
   }
 
   function handleEdit() {
-    let name = editName.trim();
-    let url = editUrl.trim();
+    let name = editNameRef.current.trim();
+    let url = editURLRef.current.trim();
+    console.log(name, url);
     url = url.includes("https://") || url.includes("http://") ? url : "https://" + url;
     if (name.length > 0 && url.length > 0) {
       setShortcuts([...shortcuts.slice(0, editInfo), { name: name, url: url }, ...shortcuts.slice(editInfo + 1)]);
@@ -68,7 +72,7 @@ function Modal({
       };
       reader.readAsDataURL(bg);
     }
-    setName(editUser);
+    setName(settingNameRef.current);
     setTheme(themeRef.current.value);
     setModal(false);
   }
@@ -99,6 +103,43 @@ function Modal({
       setCustom([...custom, i]);
     }
   }
+
+  useEffect(() => {
+    const handleEnter = (e) => {
+      if (e.key == "Enter") {
+        if (welcome) {
+          handleSetup();
+        } else if (setShortcuts) {
+          if (editInfo !== null) {
+            handleEdit();
+          } else {
+            handleShortcut();
+          }
+        } else if (name) {
+          setTimeout(() => {
+            handleSave();
+          }, 100);
+        }
+      }
+    };
+    document.addEventListener("keydown", handleEnter);
+
+    return () => {
+      document.removeEventListener("keydown", handleEnter);
+    };
+  }, []);
+
+  useEffect(() => {
+    editNameRef.current = editName;
+  }, [editName]);
+
+  useEffect(() => {
+    editURLRef.current = editUrl;
+  }, [editUrl]);
+
+  useEffect(() => {
+    settingNameRef.current = editUser;
+  }, [editUser]);
 
   return (
     <div
@@ -161,7 +202,7 @@ function Modal({
               className="welcome-input"
             />
             <button className="welcome-btn" onClick={editInfo !== null ? handleEdit : handleShortcut}>
-              {editInfo ? "Edit" : "Add"} shortcut
+              {editInfo !== null ? "Edit" : "Add"} shortcut
             </button>
           </div>
         )}
