@@ -39,7 +39,7 @@ function Chat({ prompt, mode }) {
           <div className="chat-response">{response}</div>
         </>
       ) : (
-        <div className="message">Type "c " and your prompt in the command bar to chat with AI</div>
+        <div className="message">Type "c" followed by your prompt in the command bar to chat with the AI</div>
       )}
     </div>
   );
